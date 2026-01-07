@@ -64,10 +64,7 @@ data_with_features.csv (dataset)
 helper_utils.py (provided utilities for plotting/prediction)
 unittests.py (provided unit tests)
 README.md (this file)
-
-
 How to Run (Google Colab)
-
 Upload the notebook + data_with_features.csv and helper files  into Colab.
 Run the notebook from top to bottom.
 Make sure these imports exist at the top:
@@ -92,3 +89,63 @@ time: 10.0 (10 AM)
 weekend: 1
 
 The notebook uses helper_utils.prediction() to normalize the new input and output the predicted delivery time.
+
+
+# 2 EMNIST Letter Detective
+
+In this assignment, we build and train a neural network using PyTorch to recognize handwritten letters from the EMNIST Letters dataset.
+
+This project extends the classic MNIST digit classification task and introduces additional challenges:
+	•	26 classes (letters a–z) instead of 10 digits
+	•	More variation and noise in handwriting styles
+	•	Increased model complexity and evaluation needs
+At the end of the assignment, the trained model is used to decode a secret handwritten message from Andrew Ng.
+ what i learned in this assignment
+	•	Load and explore the EMNIST Letters dataset
+	•	Apply preprocessing techniques such as normalization and tensor conversion
+	•	Build a multi-layer neural network using nn.Sequential
+	•	Train and evaluate a model using PyTorch
+	•	Analyze model performance per class
+	•	Use the trained model to decode handwritten text
+ Dataset
+	•	Dataset: EMNIST Letters
+	•	Image Size: 28 × 28 grayscale
+	•	Training Samples: 124,800
+	•	Test Samples: 20,800
+	•	Classes: 26 lowercase letters (a–z)
+	•	Labels: Originally 1–26 (shifted to 0–25 during training)
+ Data Preprocessing
+The following preprocessing steps are applied:
+	•	Conversion from PIL images to PyTorch tensors
+	•	Normalization using precomputed mean and standard deviation
+	•	Batching and shuffling using DataLoader
+ Image orientation correction is used only for visualization, not for training.
+ Model Architecture
+The neural network is implemented using nn.Sequential and follows these constraints:
+	•	Input layer: Flatten
+	•	Hidden layers: Linear + ReLU
+	•	Maximum hidden units: ≤ 256
+	•	Maximum total layers: ≤ 7
+	•	Output layer: Linear with 26 outputs
+Loss Function: CrossEntropyLoss
+Optimizer: Adam (learning rate = 0.001)
+ Training & Evaluation
+	•	Training is performed for up to 15 epochs
+	•	Accuracy and loss are tracked per epoch
+	•	Evaluation is done on unseen test data
+	•	Additional evaluation is performed per letter class
+Example performance:
+	•	Test Accuracy: ~88–90%
+	•	Some letters (e.g., I, Q, G) are more challenging due to visual similarity
+Requirements
+	•	Python 3.x
+	•	PyTorch
+	•	torchvision
+	•	Google Colab (recommended)
+ Conclusion
+This assignment covers the complete deep learning workflow:
+	•	Data loading and preprocessing
+	•	Model design and training
+	•	Evaluation and error analysis
+	•	Real-world application (handwritten message decoding)
+
