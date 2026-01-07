@@ -1,4 +1,4 @@
-# ASSIGNMENT 1 Deeper Regression, Smarter Features (PyTorch Assignment)
+# ASSIGNMENT 1: Deeper Regression, Smarter Features (PyTorch Assignment)
 The goal of this Assignment is to predict delivery time (in minutes) using multiple input features, and improve model performance through feature engineering+a multi-layer neural network.
 Problem Overview:
 Unlike the earlier labs where delivery time depended only on distance, this assignment uses a richer dataset (100 deliveries) where delivery time is influenced by:
@@ -187,9 +187,137 @@ drive.mount('/content/drive')
 2) Images not showing
 3) Shape mismatch
 
+# C1 M1 Lab 2: Modeling Non-Linear Patterns with Activation Functions (ReLU)
+This lab upgrades the previous linear delivery-time model into a non-linear neural network by adding an activation function (ReLU) and training on mixed bike + car delivery data.
+Problem Statement
+In Lab 1, a straight-line model fit bike-only deliveries well, but failed once car deliveries were added because the real relationship between distance and time becomes curved (traffic → highway → different speeds).
+Goal: train a model that can learn this non-linear pattern and make practical predictions (e.g., decide if delivery can be promised under 45 minutes, and whether to use bike or car).
+Requirements
+Google Colab (recommended)
+PyTorch (pre-installed in Colab)
+Drive mounting if using Google Drive storage:
+from google.colab import drive
+drive.mount("/content/drive")
+Running in Google Colab
+Mount Drive:
+from google.colab import drive
+drive.mount("/content/drive")
+Confirm files exist:
+!ls 
 
+Common Drive/Path Issue:
+FileNotFoundError: No such file or directory: '/content/drive/MyDrive/...'
+It usually means the folder name/path is different in your Drive.
+Fix it by locating your real path:
+!ls /content/drive/MyDrive
+Then drill down:
+!find /content/drive/MyDrive -maxdepth 4 -type d | head -n 50
+Copy the correct folder path and use it in os.chdir(...).
+Dataset (Bike + Car)
+The lab uses a combined dataset with distances from 1 to 20 miles and corresponding times that form a curve:
+distances = torch.tensor([[1.0],[1.5],...,[20.0]], dtype=torch.float32)
+times     = torch.tensor([[6.96],[9.67],...,[92.98]], dtype=torch.float32)
+Visualization:
+helper_utils.plot_data(distances, times)
+Data Preparation: Standardization (Z-Score Normalization)
+Because neural nets are sensitive to scale, we standardize both inputs and targets:
+distances_mean, distances_std = distances.mean(), distances.std()
+times_mean, times_std= times.mean(), times.std()
+distances_norm = (distances - distances_mean) / distances_std
+times_norm= (times - times_mean) / times_std
+Plot normalized data:
+helper_utils.plot_data(distances_norm, times_norm, normalize=True)
+Model Architecture (Non-Linear Network)\
+This network adds ReLU between two linear layers:
+torch.manual_seed(27)
+model = nn.Sequential(
+    nn.Linear(1, 3),  # hidden layer: 3 neurons
+    nn.ReLU(),        # non-linearity
+    nn.Linear(3, 1)   # output layer
+)
+Why this works
+nn.Linear alone can only make straight lines.
+ReLU creates “bends” by zeroing negative values.
+Multiple hidden neurons → multiple bends → curve approximation.
+Training
+Loss: Mean Squared Error
+Optimizer: SGD (lr=0.01)
+Epochs: 3000
+Final fit visualization:
+helper_utils.plot_final_fit(model, distances, times, distances_norm, times_std, times_mean)
+Inference (Prediction) — Normalize Input, De-Normalize Output
+Because the model was trained on normalized values:
+Normalize new distance
+Predict normalized time
+Convert back to minutes
+distance_to_predict = 5.1
+Decision Example (45-minute promise + choose vehicle)
+if predicted_time_actual.item() > 45:
+    print("Decision: Do NOT promise delivery under 45 minutes.")
+else:
+    if distance_to_predict <= 3:
+        print("Decision: Delivery possible. Use a bike.")
+    else:
+        print("Decision: Delivery possible. Use a car.")
+what i learned in this lab was:
+More linear neurons without activation still produce a linear model.
+ReLU makes the network capable of learning non-linear patterns.
+Standardization helps training stay stable and converge better.
 
-# ASSIGNMENT 2  EMNIST Letter Detective
+# C1 M1 Lab 3:Tensors: The Core of PyTorch
+This lab introduces PyTorch tensors, the core data structure used in deep learning.
+Before building models or training neural networks, it is essential to understand how data is represented, reshaped, combined, and manipulated using tensors.
+This lab focuses on practical tensor skills that are required to avoid and debug the most common PyTorch errors, especially shape and data type issues.
+Why Tensors Matter
+Tensors are not just containers for data:
+They are optimized for fast numerical computation
+They support automatic differentiation (used during training)
+They enable vectorized operations over entire batches of data
+Many PyTorch runtime errors happen because of:
+Shape mismatches
+Missing batch dimensions
+Incorrect data types (int vs float)
+Ensure required files exist (for example data.csv):
+!ls
+Run the notebook cells sequentially from top to bottom.
+If image paths fail to load, verify your working directory using:
+!pwd
+what i understand from this lab was:
+1. Tensor Creation
+Tensors can be created from:
+Python lists (torch.tensor)
+NumPy arrays (torch.from_numpy)
+pandas DataFrames (torch.tensor(df.values))
+2. Tensor Shapes & Dimensions
+A tensor with shape:
+[batch_size, features]: First dimension → number of samples, Second dimension → number of features per sample
+3. Indexing & Slicing
+Standard indexing (x[1], x[1, 2])
+Slicing (x[:, 2], x[0:2])
+Combining indexing and slicing
+Extracting Python values using .item()
+4. Advanced Indexing
+Powerful data selection techniques:
+Boolean masking (x[x > 6])
+5. Mathematical & Logical Operations
+Element-wise arithmetic (+, *)
+Dot products (torch.matmul)
+Broadcasting (automatic dimension expansion)
+Comparison operators (>, <, ==)
+Logical operators (&, |)
+Statistical functions (mean, std)
+Broadcasting was highlighted as a core mechanism behind how neural networks efficiently apply weights and biases.
+6. Data Types (dtype)
+How PyTorch handles type promotion automatically
+what i learned from this lab:
+Tensor shape mistakes are the #1 cause of PyTorch errors
+Always print tensor.shape when debugging
+Models expect a batch dimension
+Broadcasting eliminates the need for loops
+Correct data types (float32) are essential for training
+Tensor operations form the foundation of every neural network
+
+# ASSIGNMENT 2:  EMNIST Letter Detective
 
 In this assignment, we build and train a neural network using PyTorch to recognize handwritten letters from the EMNIST Letters dataset.
 
