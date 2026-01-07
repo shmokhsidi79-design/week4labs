@@ -375,3 +375,108 @@ This assignment covers the complete deep learning workflow:
 	•	Evaluation and error analysis
 	•	Real-world application (handwritten message decoding)
 
+
+# C1 M2 Lab1: Building Your First Image Classifier (MNIST) with PyTorch
+This lab builds a complete end-to-end image classification pipeline using PyTorch.
+The goal is to train a neural network that recognizes handwritten digits (0–9) from the MNIST dataset.
+
+By the end of the lab:
+Load and inspect MNIST data
+Apply essential transformations (tensor conversion + normalization)
+Build a custom neural network using nn.Module
+Train the model using a full training loop
+Evaluate accuracy on unseen test data
+Visualize predictions and training metrics (loss & accuracy)
+Dataset
+MNIST is a classic benchmark dataset:
+60,000 training images
+10,000 test images
+Each image is 28×28, grayscale (1 channel)
+Labels are integers from 0 to 9
+The dataset is downloaded automatically using:
+torchvision.datasets.MNIST(download=True)
+Main libraries:
+torch
+torchvision
+numpy
+matplotlib
+If running locally, install dependencies with:
+pip install torch torchvision numpy matplotlib
+Running in Google Colab
+Open the notebook in Colab.
+Run all cells from top to bottom.
+MNIST will be downloaded automatically into:
+./data
+Data Pipeline (Transforms + DataLoaders)
+Transformations
+Two key transforms are applied:
+ToTensor()
+Converts PIL image → PyTorch tensor
+Scales pixel values from 0–255 → 0–1
+Normalize((0.1307,), (0.3081,))
+Standardizes pixels using MNIST mean/std
+Helps training converge faster and more reliably
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+DataLoaders
+Training loader:
+batch_size=64
+shuffle=True (important for learning well)
+Test loader:
+batch_size=1000
+shuffle=False
+Model Architecture
+The model is a simple fully-connected neural network:
+Input shape
+Images arrive as:
+Single image: [1, 28, 28]
+Batch of 64: [64, 1, 28, 28]
+Layers
+Flatten() converts [1, 28, 28] → [784]
+Linear(784 → 128) + ReLU
+Linear(128 → 10) outputs logits for 10 classes
+Input (1×28×28)
+ → Flatten (784)
+ → Linear(784, 128)
+ → ReLU
+ → Linear(128, 10)
+Output: logits for digits 0–9
+Training Setup
+Loss Function
+CrossEntropyLoss()
+Standard for multi-class classification
+Works directly with logits (no softmax needed manually)
+Optimizer
+Adam(lr=0.001)
+Fast and stable optimizer for neural networks
+Training Process
+Training is done for 5 epochs, and each epoch includes:
+Training over all batches (train_epoch)
+Evaluation on test set (evaluate)
+Tracking:
+train_loss
+test_acc
+Results (Example Output)
+Typical results after 5 epochs (CPU in Colab):
+Test accuracy around 97%
+Training loss decreases steadily
+Accuracy curve rises then stabilizes
+Example:
+Epoch 1 Test Accuracy: ~96%
+Epoch 5 Test Accuracy: ~97%
+Evaluation & Visualization
+After training:
+Visualize random predictions from the test set:
+helper_utils.display_predictions(trained_model, test_loader, device)
+Plot learning curves:
+helper_utils.plot_metrics(train_loss, test_acc)
+These plots help verify:
+Loss goes down → model learns training data
+Test accuracy increases → model generalizes to unseen data
+what i learned from this lab was
+Data normalization is essential for stable training.
+Flattening is required before feeding images into linear layers.
+Training loop always follows the same pattern:
+zero gradients → forward → loss → backward → step
