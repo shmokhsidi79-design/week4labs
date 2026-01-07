@@ -1,4 +1,4 @@
-# 1 Deeper Regression, Smarter Features (PyTorch Assignment)
+# ASSIGNMENT 1 Deeper Regression, Smarter Features (PyTorch Assignment)
 The goal of this Assignment is to predict delivery time (in minutes) using multiple input features, and improve model performance through feature engineering+a multi-layer neural network.
 Problem Overview:
 Unlike the earlier labs where delivery time depended only on distance, this assignment uses a richer dataset (100 deliveries) where delivery time is influenced by:
@@ -90,8 +90,106 @@ weekend: 1
 
 The notebook uses helper_utils.prediction() to normalize the new input and output the predicted delivery time.
 
+#  C1 M1 Lab 1: Building a Simple Neural Network (Delivery Time Predictor)
+This lab builds a very simple neural network in PyTorch: a single linear neuron that learns a relationship between delivery distance (miles) and delivery time (minutes).
+We follow a compact Machine Learning Pipeline:
+Data ingestion & preparation (already cleaned for this lab)
+Model building (a single nn.Linear)
+Training (optimize weight & bias using MSE + SGD)
+Evaluation (predict time for a new distance, e.g., 7 miles)
+Debugging/inspection (print learned weight & bias)
+Generalization test (show failure on mixed bike+car non-linear data)
+Problem Statement
+You are a delivery rider with a 7-mile delivery. The company expects delivery in under 30 minutes.
+We train a model using historical delivery records to predict whether a new delivery is likely to be late.
 
-# 2 EMNIST Letter Detective
+Requirements
+Python 3.x (Colab already provides this)
+PyTorch (already installed in Colab)
+Google Drive mounted if you store files in Drive:
+from google.colab import drive
+drive.mount('/content/drive')
+How to Run in Google Colab
+Upload the lab folder into Google Drive (or open from your Drive).
+Mount Drive:
+from google.colab import drive
+drive.mount('/content/drive')
+Change directory to your project folder:
+import os
+os.chdir("/content/drive/MyDrive/<YOUR_PATH>/C1_M1_Lab_1_simple_nn")
+Confirm files exist:
+!ls
+Run cells top-to-bottom.
+Dataset Used (Bike-only)
+We train on simple delivery data:
+Distance (miles)	Time (minutes)
+1.0	6.96
+2.0	12.11
+3.0	16.77
+4.0	22.21
+In PyTorch tensor format (2D shape: [N, 1]):
+distances = torch.tensor([[1.0],[2.0],[3.0],[4.0]], dtype=torch.float32)
+times     = torch.tensor([[6.96],[12.11],[16.77],[22.21]], dtype=torch.float32)
+assert distances.shape == times.shape, "Each distance must have a corresponding time"
+Model
+A single neuron (linear regression in neural-network form):
+Time=W×Distance+B
+PyTorch implementation:
+model = nn.Sequential(nn.Linear(1, 1))
+Training Setup
+Loss: Mean Squared Error (MSE)
+Optimizer: Stochastic Gradient Descent (SGD)
+Learning rate: 0.01
+Epochs: 500
+loss_function = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+Training loop:
+for epoch in range(500):
+    optimizer.zero_grad()
+    outputs = model(distances)
+    loss = loss_function(outputs, times)
+    loss.backward()
+    optimizer.step()
+Results
+After training, the model learns a straight line that fits the bike-only data reasonably well.
+You can visualize:
+helper_utils.plot_results(model, distances, times)
+Prediction (Evaluation)
+Example: Predict delivery time for 7 miles:
+distance_to_predict = 7.0
+with torch.no_grad():
+    new_distance = torch.tensor([[distance_to_predict]], dtype=torch.float32)
+    predicted_time = model(new_distance).item()
+Inspect Learned Parameters (Weight & Bias)
+layer = model[0]
+weights = layer.weight.data.numpy()
+bias = layer.bias.data.numpy()
+print(f"Weight: {weights}")
+print(f"Bias: {bias}")
+Interpretation:
+Weight (W): how many minutes increase per extra mile
+Bias (B): base time even when distance is 0 (pickup/setup time)
+Bonus: Why the Linear Model Fails on Mixed Bike + Car Data
+When we include longer deliveries done by car, the relationship becomes non-linear (traffic, highways, etc.).
+A single linear neuron can only draw a straight line, so loss becomes huge:
+with torch.no_grad():
+    predictions = model(new_distances)
+new_loss = loss_function(predictions, new_times)
+print(f"Loss on new, combined data: {new_loss.item():.2f}")
+Visualization:
+helper_utils.plot_nonlinear_comparison(model, new_distances, new_times)
+This motivates the next lesson: activation functions and deeper networks to learn curves.
+Common Issues & Fixes
+1) No such file or directory when using os.chdir or !ls
+You must mount Drive first:
+from google.colab import drive
+drive.mount('/content/drive')
+2) Images not showing
+3) Shape mismatch
+
+
+
+# ASSIGNMENT 2  EMNIST Letter Detective
 
 In this assignment, we build and train a neural network using PyTorch to recognize handwritten letters from the EMNIST Letters dataset.
 
