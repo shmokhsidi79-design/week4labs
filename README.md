@@ -347,14 +347,14 @@ MNIST is a classic benchmark dataset:
 10,000 test images
 Each image is 28×28, grayscale (1 channel)
 Labels are integers from 0 to 9
-The dataset is downloaded automatically using:
+## The dataset is downloaded automatically using:
 torchvision.datasets.MNIST(download=True)
-Main libraries:
+## Main libraries:
 torch
 torchvision
 numpy
 matplotlib
-If running locally, install dependencies with:
+## If running locally, install dependencies with:
 pip install torch torchvision numpy matplotlib
 Running in Google Colab
 Open the notebook in Colab.
@@ -381,13 +381,13 @@ shuffle=True (important for learning well)
 Test loader:
 batch_size=1000
 shuffle=False
-Model Architecture
+## Model Architecture:
 The model is a simple fully-connected neural network:
 Input shape
 Images arrive as:
 Single image: [1, 28, 28]
 Batch of 64: [64, 1, 28, 28]
-Layers
+## Layers:
 Flatten() converts [1, 28, 28] → [784]
 Linear(784 → 128) + ReLU
 Linear(128 → 10) outputs logits for 10 classes
@@ -405,14 +405,14 @@ Works directly with logits (no softmax needed manually)
 Optimizer
 Adam(lr=0.001)
 Fast and stable optimizer for neural networks
-Training Process
+## Training Process:
 Training is done for 5 epochs, and each epoch includes:
 Training over all batches (train_epoch)
 Evaluation on test set (evaluate)
-Tracking:
+## Tracking:
 train_loss
 test_acc
-Results (Example Output)
+## Results (Example Output)
 Typical results after 5 epochs (CPU in Colab):
 Test accuracy around 97%
 Training loss decreases steadily
@@ -421,7 +421,7 @@ Example:
 Epoch 1 Test Accuracy: ~96%
 Epoch 5 Test Accuracy: ~97%
 Evaluation & Visualization
-After training:
+## After training:
 Visualize random predictions from the test set:
 helper_utils.display_predictions(trained_model, test_loader, device)
 Plot learning curves:
