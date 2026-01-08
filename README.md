@@ -1,6 +1,7 @@
 # ASSIGNMENT 1: Deeper Regression, Smarter Features (PyTorch Assignment)
-The goal of this Assignment is to predict delivery time (in minutes) using multiple input features, and improve model performance through feature engineering+a multi-layer neural network.
-Problem Overview:
+## The goal of this Assignment is:
+to predict delivery time (in minutes) using multiple input features, and improve model performance through feature engineering+a multi-layer neural network.
+## Problem Overview:
 Unlike the earlier labs where delivery time depended only on distance, this assignment uses a richer dataset (100 deliveries) where delivery time is influenced by:
 distance_miles: delivery distance in miles
 time_of_day_hours: dispatch time (24h format, e.g. 16.07 ≈ 4 PM)
@@ -9,12 +10,11 @@ delivery_time_minutes (target): actual delivery time in minutes
 Business constraints:
 deliveries happen between 8.0 and 20.0
 maximum distance is 20 miles
-What I did was
+## What I did was
 1) Data Loading
 Loaded data_with_features.csv using Pandas
 Verified dataset shape (100 rows × 4 columns)
 Used helper plots to visualize patterns
-
 2) Feature Engineering (Rush Hour)
 I created a new binary feature to capture traffic patterns:
 rush_hour = 1 if:
@@ -24,7 +24,6 @@ morning rush: 8.0 ≤ time < 10.0
 evening rush: 16.0 ≤ time < 19.0
 Otherwise rush_hour = 0.
 This makes “traffic effect” explicit instead of hoping the model learns it indirectly.
-
 3) Data Preparation Pipeline
 Implemented prepare_data(df) to:
 convert DataFrame to a PyTorch tensor
@@ -39,7 +38,6 @@ normalized time_of_day
 is_weekend
 is_rush_hour
 Targets are reshaped into a (N, 1) tensor.
-
 4) Neural Network Model  
 Built a deeper regression network:
 Linear(4 → 64) + ReLU
@@ -47,14 +45,12 @@ Linear(64 → 32) + ReLU
 Linear(32 → 1)
 Optimizer: SGD with learning rate 0.01
 Loss: MSELoss (mean squared error)
-
 5) Training Loop
 Implemented train_model(features, targets, epochs) that:
 initializes model using init_model()
 runs forward pass → loss → zero grad → backward → step
 logs loss every 5000 epochs
 Trained for 30,000 epochs, and the loss consistently decreased.
-
 6) Evaluation + Prediction
 evaluated performance using an Actual vs Predicted plot
 used the trained model to predict delivery time for a new unseen order through the provided helper function
@@ -77,51 +73,26 @@ unittests.exercise_1(...)
 unittests.exercise_2(...)
 unittests.exercise_3(...)
 unittests.exercise_4(...)
-
-Notes:
+## Notes:
 Tensors shape matters a lot: using .unsqueeze(1) avoids silent shape bugs.
 Example Prediction
 After training, the model can estimate delivery time for a new order:
 distance: 20.0 miles
-
 time: 10.0 (10 AM)
-
 weekend: 1
-
-The notebook uses helper_utils.prediction() to normalize the new input and output the predicted delivery time.
-
 #  C1 M1 Lab 1: Building a Simple Neural Network (Delivery Time Predictor)
 This lab builds a very simple neural network in PyTorch: a single linear neuron that learns a relationship between delivery distance (miles) and delivery time (minutes).
-We follow a compact Machine Learning Pipeline:
+## We follow a compact Machine Learning Pipeline:
 Data ingestion & preparation (already cleaned for this lab)
 Model building (a single nn.Linear)
 Training (optimize weight & bias using MSE + SGD)
 Evaluation (predict time for a new distance, e.g., 7 miles)
 Debugging/inspection (print learned weight & bias)
 Generalization test (show failure on mixed bike+car non-linear data)
-Problem Statement
+## Problem Statement
 You are a delivery rider with a 7-mile delivery. The company expects delivery in under 30 minutes.
 We train a model using historical delivery records to predict whether a new delivery is likely to be late.
-
-Requirements
-Python 3.x (Colab already provides this)
-PyTorch (already installed in Colab)
-Google Drive mounted if you store files in Drive:
-from google.colab import drive
-drive.mount('/content/drive')
-How to Run in Google Colab
-Upload the lab folder into Google Drive (or open from your Drive).
-Mount Drive:
-from google.colab import drive
-drive.mount('/content/drive')
-Change directory to your project folder:
-import os
-os.chdir("/content/drive/MyDrive/<YOUR_PATH>/C1_M1_Lab_1_simple_nn")
-Confirm files exist:
-!ls
-Run cells top-to-bottom.
-Dataset Used (Bike-only)
-We train on simple delivery data:
+## We train on simple delivery data:
 Distance (miles)	Time (minutes)
 1.0	6.96
 2.0	12.11
@@ -129,7 +100,7 @@ Distance (miles)	Time (minutes)
 4.0	22.21
 In PyTorch tensor format (2D shape: [N, 1]):
 distances = torch.tensor([[1.0],[2.0],[3.0],[4.0]], dtype=torch.float32)
-times     = torch.tensor([[6.96],[12.11],[16.77],[22.21]], dtype=torch.float32)
+times= torch.tensor([[6.96],[12.11],[16.77],[22.21]], dtype=torch.float32)
 assert distances.shape == times.shape, "Each distance must have a corresponding time"
 Model
 A single neuron (linear regression in neural-network form):
@@ -150,7 +121,7 @@ for epoch in range(500):
     loss = loss_function(outputs, times)
     loss.backward()
     optimizer.step()
-Results
+## Results
 After training, the model learns a straight line that fits the bike-only data reasonably well.
 You can visualize:
 helper_utils.plot_results(model, distances, times)
@@ -166,7 +137,7 @@ weights = layer.weight.data.numpy()
 bias = layer.bias.data.numpy()
 print(f"Weight: {weights}")
 print(f"Bias: {bias}")
-Interpretation:
+## Interpretation:
 Weight (W): how many minutes increase per extra mile
 Bias (B): base time even when distance is 0 (pickup/setup time)
 Bonus: Why the Linear Model Fails on Mixed Bike + Car Data
@@ -179,7 +150,7 @@ print(f"Loss on new, combined data: {new_loss.item():.2f}")
 Visualization:
 helper_utils.plot_nonlinear_comparison(model, new_distances, new_times)
 This motivates the next lesson: activation functions and deeper networks to learn curves.
-Common Issues & Fixes
+## Common Issues & Fixes
 1) No such file or directory when using os.chdir or !ls
 You must mount Drive first:
 from google.colab import drive
@@ -189,23 +160,11 @@ drive.mount('/content/drive')
 
 # C1 M1 Lab 2: Modeling Non-Linear Patterns with Activation Functions (ReLU)
 This lab upgrades the previous linear delivery-time model into a non-linear neural network by adding an activation function (ReLU) and training on mixed bike + car delivery data.
-Problem Statement
+## Problem Statement
 In Lab 1, a straight-line model fit bike-only deliveries well, but failed once car deliveries were added because the real relationship between distance and time becomes curved (traffic → highway → different speeds).
-Goal: train a model that can learn this non-linear pattern and make practical predictions (e.g., decide if delivery can be promised under 45 minutes, and whether to use bike or car).
-Requirements
-Google Colab (recommended)
-PyTorch (pre-installed in Colab)
-Drive mounting if using Google Drive storage:
-from google.colab import drive
-drive.mount("/content/drive")
-Running in Google Colab
-Mount Drive:
-from google.colab import drive
-drive.mount("/content/drive")
-Confirm files exist:
-!ls 
-
-Common Drive/Path Issue:
+## Goal: 
+train a model that can learn this non-linear pattern and make practical predictions (e.g., decide if delivery can be promised under 45 minutes, and whether to use bike or car).
+## Common Drive/Path Issue:
 FileNotFoundError: No such file or directory: '/content/drive/MyDrive/...'
 It usually means the folder name/path is different in your Drive.
 Fix it by locating your real path:
@@ -213,10 +172,10 @@ Fix it by locating your real path:
 Then drill down:
 !find /content/drive/MyDrive -maxdepth 4 -type d | head -n 50
 Copy the correct folder path and use it in os.chdir(...).
-Dataset (Bike + Car)
+## Dataset (Bike + Car)
 The lab uses a combined dataset with distances from 1 to 20 miles and corresponding times that form a curve:
 distances = torch.tensor([[1.0],[1.5],...,[20.0]], dtype=torch.float32)
-times     = torch.tensor([[6.96],[9.67],...,[92.98]], dtype=torch.float32)
+times= torch.tensor([[6.96],[9.67],...,[92.98]], dtype=torch.float32)
 Visualization:
 helper_utils.plot_data(distances, times)
 Data Preparation: Standardization (Z-Score Normalization)
@@ -259,30 +218,26 @@ else:
         print("Decision: Delivery possible. Use a bike.")
     else:
         print("Decision: Delivery possible. Use a car.")
-what i learned in this lab was:
+## what i learned in this lab was:
 More linear neurons without activation still produce a linear model.
 ReLU makes the network capable of learning non-linear patterns.
 Standardization helps training stay stable and converge better.
 
 # C1 M1 Lab 3:Tensors: The Core of PyTorch
+## in this lab:
 This lab introduces PyTorch tensors, the core data structure used in deep learning.
 Before building models or training neural networks, it is essential to understand how data is represented, reshaped, combined, and manipulated using tensors.
 This lab focuses on practical tensor skills that are required to avoid and debug the most common PyTorch errors, especially shape and data type issues.
-Why Tensors Matter
+## Why Tensors Matter:
 Tensors are not just containers for data:
 They are optimized for fast numerical computation
 They support automatic differentiation (used during training)
 They enable vectorized operations over entire batches of data
-Many PyTorch runtime errors happen because of:
+## Many PyTorch runtime errors happen because of:
 Shape mismatches
 Missing batch dimensions
 Incorrect data types (int vs float)
-Ensure required files exist (for example data.csv):
-!ls
-Run the notebook cells sequentially from top to bottom.
-If image paths fail to load, verify your working directory using:
-!pwd
-what i understand from this lab was:
+## what i learned from this lab was:
 1. Tensor Creation
 Tensors can be created from:
 Python lists (torch.tensor)
@@ -321,11 +276,11 @@ Tensor operations form the foundation of every neural network
 
 In this assignment, we build and train a neural network using PyTorch to recognize handwritten letters from the EMNIST Letters dataset.
 
-This project extends the classic MNIST digit classification task and introduces additional challenges:
+## This project extends the classic MNIST digit classification task and introduces additional challenges:
 	•	26 classes (letters a–z) instead of 10 digits
 	•	More variation and noise in handwriting styles
 	•	Increased model complexity and evaluation needs
-At the end of the assignment, the trained model is used to decode a secret handwritten message from Andrew Ng.
+## At the end of the assignment, the trained model is used to decode a secret handwritten message from Andrew Ng.
  what i learned in this assignment
 	•	Load and explore the EMNIST Letters dataset
 	•	Apply preprocessing techniques such as normalization and tensor conversion
@@ -333,7 +288,7 @@ At the end of the assignment, the trained model is used to decode a secret handw
 	•	Train and evaluate a model using PyTorch
 	•	Analyze model performance per class
 	•	Use the trained model to decode handwritten text
- Dataset
+## Dataset
 	•	Dataset: EMNIST Letters
 	•	Image Size: 28 × 28 grayscale
 	•	Training Samples: 124,800
@@ -341,7 +296,7 @@ At the end of the assignment, the trained model is used to decode a secret handw
 	•	Classes: 26 lowercase letters (a–z)
 	•	Labels: Originally 1–26 (shifted to 0–25 during training)
  Data Preprocessing
-The following preprocessing steps are applied:
+## The following preprocessing steps are applied:
 	•	Conversion from PIL images to PyTorch tensors
 	•	Normalization using precomputed mean and standard deviation
 	•	Batching and shuffling using DataLoader
@@ -379,15 +334,14 @@ This assignment covers the complete deep learning workflow:
 # C1 M2 Lab1: Building Your First Image Classifier (MNIST) with PyTorch
 This lab builds a complete end-to-end image classification pipeline using PyTorch.
 The goal is to train a neural network that recognizes handwritten digits (0–9) from the MNIST dataset.
-
-By the end of the lab:
+## By the end of the lab:
 Load and inspect MNIST data
 Apply essential transformations (tensor conversion + normalization)
 Build a custom neural network using nn.Module
 Train the model using a full training loop
 Evaluate accuracy on unseen test data
 Visualize predictions and training metrics (loss & accuracy)
-Dataset
+## Dataset
 MNIST is a classic benchmark dataset:
 60,000 training images
 10,000 test images
@@ -480,3 +434,69 @@ Data normalization is essential for stable training.
 Flattening is required before feeding images into linear layers.
 Training loop always follows the same pattern:
 zero gradients → forward → loss → backward → step
+
+# C1M4 Assignment Overcoming Overfitting: Building a Robust CNN (PyTorch)
+The goal of this project is to take a CNN that showed clear signs of **overfitting** and systematically upgrade the entire pipeline to improve generalization.
+## Project Overview
+Your previous CNN learned the training set too well and failed to generalize (validation accuracy plateaued and validation loss diverged).  
+In this assignment, the model and data pipeline were redesigned to reduce overfitting through:
+- Stronger **data augmentation**
+- A modular CNN architecture using reusable **CNNBlocks**
+- **Batch Normalization** to stabilize training
+- **Dropout** for regularization
+- **Weight Decay (L2 regularization)** in the optimizer
+- A training loop that returns the **best validation model** across epochs
+## Dataset
+- **CIFAR-100 subset** (filtered to 15 target classes)
+- Loaded via helper utility: `helper_utils.load_cifar100_subset`
+- Data is automatically downloaded if not found locally under `./cifar_100`
+### Target Classes (15)
+**Flowers:** orchid, poppy, rose, sunflower, tulip  
+**Mammals:** fox, porcupine, possum, raccoon, skunk  
+**Insects:** bee, beetle, butterfly, caterpillar, cockroach
+## Model Architecture
+
+### CNNBlock (Modular Convolution Block)
+Each block contains:
+1. `Conv2d`
+2. `BatchNorm2d`
+3. `ReLU`
+4. `MaxPool2d(kernel_size=2, stride=2)`
+### SimpleCNN
+- 3 convolution blocks:
+  - `3 → 32 → 64 → 128` channels
+- Classifier:
+  - `Flatten`
+  - `Linear(128*4*4 → 512)`
+  - `ReLU`
+  - `Dropout(p=0.6)`
+  - `Linear(512 → num_classes)`
+## Training Setup
+### Loss Function
+- `CrossEntropyLoss`
+### Optimizer (with regularization)
+- `Adam(lr=0.0005, weight_decay=0.0005)`
+### Training Functions (Implemented)
+- `train_epoch`: training logic (forward, loss, backward, optimizer step)
+- `validate_epoch`: validation logic with `torch.no_grad()` + accuracy
+### Training Loop
+The training loop:
+- Trains for a specified number of epochs (50 in the notebook)
+- Tracks:
+  - `train_loss`
+  - `val_loss`
+  - `val_accuracy`
+- Keeps the **best model state** based on highest validation accuracy
+- Returns the best model at the end
+## Results Summary
+
+After applying stronger augmentation + BatchNorm + Dropout + Weight Decay:
+
+- Training and validation loss curves became much closer (overfitting reduced)
+- Validation accuracy improved steadily and peaked around **~70%**
+
+what i learned from this lab was:
+- Overfitting is often solved by upgrading the full pipeline, not one parameter.
+- Data augmentation improves robustness by exposing the model to varied inputs.
+- Batch normalization stabilizes training and acts as a regularizer.
+
