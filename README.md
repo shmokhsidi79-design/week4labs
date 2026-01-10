@@ -623,7 +623,7 @@ what i learned from this lab was:
 - Data augmentation improves robustness by exposing the model to varied inputs.
 - Batch normalization stabilizes training and acts as a regularizer.
 
-## WeeklyProjct: Image Classification with Transfer Learning (PyTorch)
+# WeeklyProjct: Image Classification with Transfer Learning (PyTorch)
 ## Project Overview:
 This project implements a complete image classification pipeline using Transfer Learning with PyTorch.
 The goal is to classify natural scene images into 6 categories using a pre-trained ResNet-18 model and compare two transfer learning strategies:
