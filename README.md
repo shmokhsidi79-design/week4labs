@@ -623,3 +623,126 @@ what i learned from this lab was:
 - Data augmentation improves robustness by exposing the model to varied inputs.
 - Batch normalization stabilizes training and acts as a regularizer.
 
+## WeeklyProjct: Image Classification with Transfer Learning (PyTorch)
+## Project Overview:
+This project implements a complete image classification pipeline using Transfer Learning with PyTorch.
+The goal is to classify natural scene images into 6 categories using a pre-trained ResNet-18 model and compare two transfer learning strategies:
+Feature Extraction (Frozen ConvNet)
+Fine-tuning (Unfrozen ConvNet)
+The project covers everything from data ingestion to training, evaluation, inference, and optional deployment using ONNX.
+
+##Learning Objectives
+Load and prepare image datasets for deep learning
+Apply data augmentation and ImageNet normalization
+Use pre-trained CNN models for transfer learning
+
+## Implement and compare:
+Fixed feature extractor
+Full fine-tuning
+Evaluate model performance
+Run inference on custom images
+(Optional) Export model to ONNX for deployment
+## Dataset
+Dataset: Intel Image Classification
+Source: Kaggle
+Classes (6):
+buildings
+forest
+glacier
+mountain
+sea
+street
+## Dataset structure used:
+seg_train/seg_train/
+seg_test/seg_test/
+seg_pred/seg_pred/
+## Dataset sizes:
+Training images: 14,034
+Testing images: 3,000
+
+## Environment & Requirements
+Python 3.10+
+Google Colab (GPU enabled)
+PyTorch
+torchvision
+matplotlib
+kaggle
+GPU was used for faster training:
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+## Project Pipeline
+   Data Ingestion
+Dataset downloaded directly from Kaggle using Kaggle API
+Extracted and organized into training and testing folders
+Loaded using torchvision.datasets.ImageFolder
+
+## Data Preparation
+Transformations applied:
+Training:
+RandomResizedCrop (224×224)
+RandomHorizontalFlip
+Conversion to Tensor
+ImageNet normalization
+Validation / Testing:
+Resize to 256
+CenterCrop (224×224)
+Conversion to Tensor
+ImageNet normalization
+These steps ensure compatibility with pre-trained ResNet weights.
+
+## DataLoader
+Batch size: 32
+Parallel loading using num_workers = 2
+Shuffling enabled for training
+
+## Model Building
+Pre-trained ResNet-18
+Final fully connected layer replaced to output 6 classes
+model.fc = nn.Linear(model.fc.in_features, 6)
+
+## Training Strategies
+ Strategy 1: Feature Extraction (Frozen ConvNet)
+All convolutional layers frozen
+Only the final fully connected layer trained
+Optimizer updates only model.fc parameters
+
+Pros:
+Faster training
+Less risk of overfitting
+
+ Strategy 2: Fine-Tuning (Unfrozen ConvNet)
+
+All layers unfrozen
+Entire network trained with a smaller learning rate
+Pros:
+Learns task-specific features
+Potentially higher performance on complex datasets
+
+## Results & Evaluation
+ Feature Extraction Results:
+Best Validation Accuracy: 93.80%
+Final Validation Accuracy: 92.98%
+ Fine-Tuning Results:
+Best Validation Accuracy: 90.84%
+Final Validation Accuracy: 89.88%
+
+## Conclusion:
+In this project, Feature Extraction outperformed Fine-Tuning, likely due to limited training epochs and the strength of pre-trained features.
+
+
+## Deployment (Optional – ONNX)
+
+The trained model can be exported to ONNX format for production deployment.
+
+Steps:
+Switch model to evaluation mode
+Create a dummy input tensor
+Export using torch.onnx.export
+Load and run inference using ONNX Runtime
+(ONNX code provided but optional in this project)
+
+
+## Final Notes
+This project demonstrates a real-world deep learning workflow using transfer learning.
+It highlights how pre-trained CNNs can be efficiently adapted for new classification tasks with limited data and compute.
+
