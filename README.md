@@ -435,6 +435,129 @@ Flattening is required before feeding images into linear layers.
 Training loop always follows the same pattern:
 zero gradients → forward → loss → backward → step
 
+# C1M3:Tensors: The Core of PyTorch 
+
+This repo/notebook is a hands-on introduction to PyTorch tensors — the core data structure behind deep learning in PyTorch.
+By the end of this lab we will be able to:
+Create tensors from:
+Python lists (torch.tensor)
+NumPy arrays (torch.from_numpy)
+pandas DataFrames (df.values → torch.tensor)
+Debug tensor issues using:
+.shape to inspect dimensions
+.dtype to inspect data type
+Reshape and manipulate tensors:
+unsqueeze() / squeeze()
+reshape()
+transpose()
+cat() (concatenation)
+Index and slice tensors:
+standard indexing: x[1, 2], x[0], x[:, 2]
+slicing: x[0:2], x[:, ::2]
+.item() to extract a Python value from a single-element tensor
+Apply math and logic operations:
+element-wise operations: +, *
+dot products: torch.matmul
+broadcasting
+boolean masking and logical operators
+## Why Tensors Matter (Common Errors)
+Tensors are optimized for the exact math used in neural networks. But they also introduce common beginner issues, like:
+Shape mismatch (model expects [batch, features], but you pass [features])
+Wrong dtype (int tensors used where float tensors are expected)
+Missing batch dimension (your model expects a batch, even for one sample)
+
+## best debugging tools:
+
+print(x.shape)
+
+print(x.dtype)
+
+## Lab Sections
+1) Tensor Creation
+Create tensors from different sources:
+
+Python list → torch.tensor([1,2,3])
+
+NumPy array → torch.from_numpy(array)
+
+DataFrame → torch.tensor(df.values)
+
+
+2) Reshaping & Manipulating
+
+Key tools:
+
+unsqueeze(dim) adds a dimension
+
+squeeze() removes dimensions of size 1
+
+reshape(new_shape) changes structure
+
+transpose(dim0, dim1) swaps dimensions
+
+torch.cat((a,b), dim=...) combines tensors along an existing dimension
+
+3) Indexing & Slicing
+
+Use indexing to extract:
+
+single values, rows, columns
+
+sub-tensors
+
+filtered selections via boolean masks
+
+4) Math & Logic Operations
+
+Includes:
+
+element-wise math (a + b, a * b)
+
+dot product (torch.matmul)
+
+broadcasting (automatic expansion of compatible shapes)
+
+comparisons (>, <, ==)
+
+logical operations (&, |)
+
+Exercises Included
+Exercise 1: Sales Data Analysis
+
+Sum a row (total sales for a product)
+
+Boolean mask to detect high sales months
+
+Slice mid-month columns for all products
+
+Exercise 2: Image Batch Transformation
+
+Convert image shape from [batch, height, width]
+to [batch, channels, height, width] using unsqueeze(1)
+
+Then transpose to [batch, height, width, channels]
+
+Exercise 3: Combining & Weighting Sensor Data
+
+Stack temperature + humidity into a 2x5 tensor
+
+Apply weights via broadcasting
+
+Compute weighted average per timestep
+
+Exercise 4: Feature Engineering for Taxi Fares
+
+Create a new feature: is_rush_hour_long_trip:
+
+distance > 10 km
+
+hour in morning rush [8,10) or evening rush [17,19)
+
+reshape to a column vector and concatenate to original data
+
+
+
+
 # C1M4 Assignment Overcoming Overfitting: Building a Robust CNN (PyTorch)
 The goal of this project is to take a CNN that showed clear signs of **overfitting** and systematically upgrade the entire pipeline to improve generalization.
 ## Project Overview
