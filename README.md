@@ -746,3 +746,104 @@ Load and run inference using ONNX Runtime
 This project demonstrates a real-world deep learning workflow using transfer learning.
 It highlights how pre-trained CNNs can be efficiently adapted for new classification tasks with limited data and compute.
 
+
+# Plant Disease Classification with Transfer Learning (PyTorch)
+This project focuses on classifying plant leaf diseases using **deep learning and transfer learning** with **PyTorch**.  
+We use a pre-trained **ResNet18** model and fine-tune it on the **PlantVillage** dataset to recognize **38 different plant disease classes**.
+
+The goal is to compare two common transfer learning strategies and understand their impact on performance.
+
+
+##  Project Overview
+In this project, we:
+- Load the **PlantVillage** dataset using `tensorflow_datasets` (no Kaggle )
+- Stream the dataset efficiently into PyTorch
+- Apply image preprocessing and augmentation
+- Train a ResNet18 model using:
+  - **Feature Extraction**
+  - **Fine-tuning**
+- Compare accuracy and loss between both approaches
+- Visualize training results
+
+##  Dataset
+
+- **Name:** PlantVillage  
+- **Source:** `tensorflow_datasets`
+- **Number of classes:** 38  
+- **Data split:**
+  - Training: 80%
+  - Validation: 20%
+
+> The dataset does not provide a validation split by default, so the last 20% of the training data is used for validation.
+
+
+## Data Preparation
+Since ResNet18 is pre-trained on ImageNet, we use ImageNet normalization values:
+python
+Copy code
+mean = [0.485, 0.456, 0.406]
+std  = [0.229, 0.224, 0.225]
+Training Transforms
+RandomResizedCrop (224×224)
+RandomHorizontalFlip
+ToTensor
+Normalize
+Validation Transforms
+Resize (256)
+CenterCrop (224×224)
+ToTensor
+Normalize
+
+## TFDS to PyTorch (Streaming)
+The dataset is loaded using TensorFlow Datasets, then wrapped in a custom PyTorch IterableDataset to:
+Convert NumPy images to PIL format
+Apply torchvision transforms
+Stream data efficiently without loading everything into memory
+This approach is memory-friendly and works well in Colab.
+
+## Model Architecture
+We use ResNet18 with pre-trained ImageNet weights.
+The final fully connected layer is replaced to match our dataset:
+python
+Copy code
+## model.fc = nn.Linear(model.fc.in_features, 38)
+ Training Strategies
+ Feature Extraction
+Freeze all model layers
+Train only the final fully connected layer
+Learning rate: 1e-3
+
+ Results (2 epochs):
+Best Validation Accuracy: ~90.8%
+Final Validation Accuracy: ~90.0%
+
+## Fine-tuning
+Unfreeze all layers
+
+Train the entire network
+
+Smaller learning rate: 1e-4
+
+Results (2 epochs):
+
+Best Validation Accuracy: ~98.3%
+
+Final Validation Accuracy: ~97.3%
+
+ Fine-tuning clearly outperformed feature extraction.
+
+## Results Visualization
+The project includes plots for:
+Training vs Validation Loss
+Training vs Validation Accuracy
+Validation Accuracy comparison between both methods
+These visualizations help understand model behavior and convergence.
+
+## Key Takeaways
+Transfer learning is very effective for image classification tasks
+Fine-tuning gives better performance but requires more computation
+Proper normalization and data augmentation make a big difference
+Streaming datasets is a great solution for large image datasets
+
+
+
